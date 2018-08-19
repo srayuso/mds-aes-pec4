@@ -1,0 +1,57 @@
+
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css">
+  <title>d3-sankey-diagram</title>
+  <link rel="stylesheet" href="/files/sankey_styles.css"></style
+</head>
+<body>
+  
+  
+  <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+  <script src="/files/d3-sankey-diagram.min.js" charset="utf-8"></script>
+
+  
+<div class="sankey" id="demo-multiple-types" ><svg width="900" height="600" ></svg></div>
+      
+  
+  <script>
+ 
+  var multiple_types = {
+        nodes: {{ NODES }} ,
+        links: {{ LINKS }},
+        alignLinkTypes: true
+      };
+
+   var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+   function smallSankey(marginTop) {
+     return function(el) {
+       el.call(d3.sankeyDiagram()
+                 .nodeTitle(function(d) { return d.title || d.id; })
+                 .linkColor(function(d) { return color(d.type); }));
+     };
+   }
+
+   function alignLinkTypes(layout, align) {
+     return layout
+       .sourceId(function(d) { return { id: typeof d.source === "object" ? d.source.id : d.source,
+                                        port: align ? d.type : null }; })
+       .targetId(function(d) { return { id: typeof d.target === "object" ? d.target.id : d.target,
+                                        port: align ? d.type : null }; });
+   }
+
+   var smallLayout2 = d3.sankey()
+                        .extent([[200, 10], [760, 590]]);
+   alignLinkTypes(smallLayout2, true);
+
+    
+    d3.select('#demo-multiple-types svg')
+        .datum(smallLayout2(multiple_types))
+        .call(smallSankey(10));
+
+    
+  </script>
+
+  </body>
+</html>
